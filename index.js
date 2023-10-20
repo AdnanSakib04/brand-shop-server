@@ -28,6 +28,7 @@ async function run() {
     await client.connect();
     const productCollection = client.db('brandShopDB').collection('products');
     const brandCollection = client.db('brandShopDB').collection('brands');
+    const cartCollection = client.db('brandShopDB').collection('cart');
 
     //get route for brands
     app.get('/brands', async (req, res) => {
@@ -89,9 +90,17 @@ async function run() {
           }
       }
 
-      const result = await coffeeCollection.updateOne(filter, product, options);
+      const result = await productCollection.updateOne(filter, product, options);
       res.send(result);
   })
+
+  //post route for product add to cart
+      app.post('/cart', async (req, res) => {
+        const cartProduct = req.body;
+        console.log(cartProduct);
+        const result = await cartCollection.insertOne(cartProduct);
+        res.send(result);
+      })
 
 
     // Send a ping to confirm a successful connection
