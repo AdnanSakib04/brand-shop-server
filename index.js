@@ -26,14 +26,24 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    const coffeeCollection = client.db('brandShopDB').collection('products');
+    const productCollection = client.db('brandShopDB').collection('products');
+    const brandCollection = client.db('brandShopDB').collection('brands');
 
+    //get route for brands
+    app.get('/brands', async (req, res) => {
+      const cursor = brandCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
+    //post route for add coffee
     app.post('/products', async (req, res) => {
       const newProduct = req.body;
       console.log(newProduct);
-      const result = await coffeeCollection.insertOne(newProduct);
+      const result = await productCollection.insertOne(newProduct);
       res.send(result);
-  })
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -48,9 +58,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Brand shop server is running')
+  res.send('Brand shop server is running')
 })
 
 app.listen(port, () => {
-    console.log(`Brand shop server is running on port: ${port}`)
+  console.log(`Brand shop server is running on port: ${port}`)
 })
