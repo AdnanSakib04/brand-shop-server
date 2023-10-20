@@ -38,7 +38,7 @@ async function run() {
     })
 
 
-    //post route for add coffee
+    //post route for add products
     app.post('/products', async (req, res) => {
       const newProduct = req.body;
       console.log(newProduct);
