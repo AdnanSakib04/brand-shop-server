@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -46,20 +46,52 @@ async function run() {
     })
 
 
+    //get route for specific brand
     app.get('/brands/:brand', async (req, res) => {
       const brand = req.params.brand;
       const query = { brand: brand }
-      const cursor =  productCollection.find(query);
+      const cursor = productCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
-  })
+    })
 
-   // get route for product details
-   app.get('/products', async (req, res) => {
-    const cursor = productCollection.find();
-    const products = await cursor.toArray();
-    res.send(products);
-})
+
+    // get route for product details
+    app.get('/products', async (req, res) => {
+      const cursor = productCollection.find();
+      const products = await cursor.toArray();
+      res.send(products);
+    })
+
+    //get route for update product
+    app.get('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    })
+
+    //put route for update products
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedProduct = req.body;
+
+      const product = {
+          $set: {
+              name: updatedProduct.name,
+              brand: updatedProduct.brand,
+              photo: updatedProduct.photo,
+              rating: updatedProduct.rating,
+              price: updatedProduct.price,
+              type: updatedProduct.type,
+          }
+      }
+
+      const result = await coffeeCollection.updateOne(filter, product, options);
+      res.send(result);
+  })
 
 
     // Send a ping to confirm a successful connection
