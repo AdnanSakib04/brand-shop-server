@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const productCollection = client.db('brandShopDB').collection('products');
     const brandCollection = client.db('brandShopDB').collection('brands');
     const cartCollection = client.db('brandShopDB').collection('cart');
@@ -80,42 +80,42 @@ async function run() {
       const updatedProduct = req.body;
 
       const product = {
-          $set: {
-              name: updatedProduct.name,
-              brand: updatedProduct.brand,
-              photo: updatedProduct.photo,
-              rating: updatedProduct.rating,
-              price: updatedProduct.price,
-              type: updatedProduct.type,
-          }
+        $set: {
+          name: updatedProduct.name,
+          brand: updatedProduct.brand,
+          photo: updatedProduct.photo,
+          rating: updatedProduct.rating,
+          price: updatedProduct.price,
+          type: updatedProduct.type,
+        }
       }
 
       const result = await productCollection.updateOne(filter, product, options);
       res.send(result);
-  })
+    })
 
-  //post route for product add to cart
-      app.post('/cart', async (req, res) => {
-        const cartProduct = req.body;
-        console.log(cartProduct);
-        const result = await cartCollection.insertOne(cartProduct);
-        res.send(result);
-      })
+    //post route for product add to cart
+    app.post('/cart', async (req, res) => {
+      const cartProduct = req.body;
+      console.log(cartProduct);
+      const result = await cartCollection.insertOne(cartProduct);
+      res.send(result);
+    })
 
-  //get route for cart
-  app.get('/cart', async (req, res) => {
-    const cursor = cartCollection.find();
-    const result = await cursor.toArray();
-    res.send(result);
-  })
+    //get route for cart
+    app.get('/cart', async (req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
-  //delete route for cart
-  app.delete('/cart/:id', async (req, res) => {
-    const id = req.params.id;
-    const query = { _id: new ObjectId(id) }
-    const result = await cartCollection.deleteOne(query);
-    res.send(result);
-})
+    //delete route for cart
+    app.delete('/cart/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
